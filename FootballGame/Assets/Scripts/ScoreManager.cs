@@ -66,4 +66,5 @@ public class ScoreManager : MonoBehaviour
             Debug.LogWarning("Score Text UI element not assigned in ScoreManager!");
         }
     }
+
 }
