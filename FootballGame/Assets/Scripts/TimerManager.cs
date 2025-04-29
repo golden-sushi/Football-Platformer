@@ -6,7 +6,7 @@ public class TimerManager : MonoBehaviour
 {
     public static TimerManager Instance { get; private set; } // Singleton
 
-    public float timeLimit = 180f; // Time limit in seconds (e.g., 3 minutes)
+    public float timeLimit = 60f; // Time limit in seconds (e.g., 3 minutes)
     public TextMeshProUGUI timerText;
 
     private float currentTime;

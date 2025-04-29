@@ -22,6 +22,6 @@ public class EndScreenScore : MonoBehaviour
         Debug.Log($"[EndScreenUI] Successfully updated UI text element to display: \"{finalScoreTextElement.text}\"");
 
         // Optional: Clear the saved score from PlayerPrefs
-        PlayerPrefs.DeleteKey(ScorePlayerPrefsKey);
+        //PlayerPrefs.DeleteKey(ScorePlayerPrefsKey);
     }
 }

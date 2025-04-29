@@ -11,10 +11,10 @@ public class GameOverScreen : MonoBehaviour
    }
    public void MainMenu() 
    {
-      SceneManager.LoadSceneAsync("MainMenu");
+      SceneManager.LoadSceneAsync("Main Menu");
    }
    public void ScoreBoard()
    {
-      SceneManager.LoadSceneAsync("ScoreBoard");
+      SceneManager.LoadSceneAsync("Score Board");
    }
 }

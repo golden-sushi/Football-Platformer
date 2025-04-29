@@ -15,6 +15,6 @@ public class MainMenu : MonoBehaviour
    }
    public void ScoreBoard()
    {
-      SceneManager.LoadSceneAsync("ScoreBoard");
+      SceneManager.LoadSceneAsync("Score Board");
    }
 }
