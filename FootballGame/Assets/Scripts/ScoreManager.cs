@@ -35,12 +35,6 @@ public class ScoreManager : MonoBehaviour
         currentScore += amount;
         Debug.Log($"Score: {currentScore} / {targetScore}"); // For testing
         UpdateScoreUI();
-
-        // Optional: Check win condition directly here if you don't use a GameManager
-        // if (HasReachedTarget() && GameManager.Instance != null)
-        // {
-        //     GameManager.Instance.CheckWinCondition(); // Tell GameManager score target reached
-        // }
     }
 
     public bool HasReachedTarget()
