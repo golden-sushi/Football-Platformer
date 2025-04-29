@@ -26,6 +26,7 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
+
         currentScore = 0;
         UpdateScoreUI();
     }
@@ -52,9 +53,8 @@ public class ScoreManager : MonoBehaviour
         if (scoreText != null)
         {
             // Example format: "Score: 1500 / 400000"
-            //scoreText.text = $"Score: {currentScore} / {targetScore}";
-            int score = PlayerPrefs.GetInt(GameManager.FinalScoreKey, 0);
-            scoreText.text = $"Score: {score} / {targetScore}";
+            // get the final score
+            scoreText.text = $"Score: {currentScore}";
             // Or just show current score: scoreText.text = $"Score: {currentScore}";
         }
         else
