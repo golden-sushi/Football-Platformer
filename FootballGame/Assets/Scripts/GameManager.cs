@@ -1,14 +1,13 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Needed for restarting the scene
+using UnityEngine.SceneManagement; // Required for loading scenes
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; } // Singleton
 
-    public GameObject winPanel; // Assign a UI Panel to show on win
-    public GameObject losePanel; // Assign a UI Panel to show on lose
-
     private bool gameHasEnded = false;
+    private string exitSceneName = "Exit Scene"; // <<< Make sure this matches your scene name EXACTLY
+    public const string FinalScoreKey = "FinalScore"; // Key for PlayerPrefs
 
     void Awake()
     {
@@ -26,95 +25,61 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         gameHasEnded = false;
-        // Ensure panels are hidden at start
-        if (winPanel != null) winPanel.SetActive(false);
-        if (losePanel != null) losePanel.SetActive(false);
         Time.timeScale = 1f; // Ensure game time is running normally
     }
 
     void Update()
     {
-        // Continuously check conditions if the game hasn't ended yet
-        if (!gameHasEnded)
-        {
-            CheckWinCondition();
-            // Lose condition is checked when TimerManager runs out of time
-        }
+        // No longer checking for win condition here.
+        // Game end is triggered ONLY by the timer via CheckLoseCondition.
+        if (gameHasEnded) return; // Only necessary if other things could potentially call TriggerGameEnd
+
     }
 
-    public void CheckWinCondition()
-    {
-        if (gameHasEnded) return; // Don't check if already ended
-
-        if (ScoreManager.Instance != null && ScoreManager.Instance.HasReachedTarget())
-        {
-            WinGame();
-        }
-    }
-
+    // Called by TimerManager when time runs out
     public void CheckLoseCondition()
     {
-         if (gameHasEnded) return; // Don't check if already ended
+        if (gameHasEnded) return;
 
-         // Primary lose condition: time runs out
-         if (TimerManager.Instance != null && TimerManager.Instance.IsTimeUp())
-         {
-            // Only trigger lose if the win condition wasn't met simultaneously
-            if (ScoreManager.Instance == null || !ScoreManager.Instance.HasReachedTarget())
-            {
-                 LoseGame();
-            }
-         }
-         // You could add other lose conditions here (e.g., player health <= 0)
+        // Time is up! Always trigger the end sequence regardless of score.
+        Debug.Log("Time's Up! Transitioning to Exit Scene.");
+        TriggerGameEnd();
     }
 
-
-    void WinGame()
+    // Called only when the timer expires
+    void TriggerGameEnd()
     {
-        if (gameHasEnded) return; // Prevent multiple triggers
+        if (gameHasEnded) return;
 
-        Debug.Log("YOU WIN!");
         gameHasEnded = true;
-        Time.timeScale = 0f; // Pause the game
+        Debug.Log("Timer expired. Preparing to load Exit Scene.");
 
-        if (TimerManager.Instance != null) TimerManager.Instance.StopTimer(); // Stop the timer visually
-
-        if (winPanel != null)
+        // Stop timers or other ongoing processes if needed
+        if (TimerManager.Instance != null)
         {
-            winPanel.SetActive(true); // Show the win screen UI
+            TimerManager.Instance.StopTimer();
         }
-        // Add any other win effects (sound, animation, etc.)
-    }
 
-    void LoseGame()
-    {
-        if (gameHasEnded) return; // Prevent multiple triggers
-
-        Debug.Log("YOU LOSE!");
-        gameHasEnded = true;
-        Time.timeScale = 0f; // Pause the game
-
-         if (TimerManager.Instance != null) TimerManager.Instance.StopTimer(); // Ensure timer stops
-
-        if (losePanel != null)
+        // Get the final score
+        int finalScore = 0;
+        if (ScoreManager.Instance != null)
         {
-            losePanel.SetActive(true); // Show the lose screen UI
+            finalScore = ScoreManager.Instance.GetCurrentScore();
+            Debug.Log($"Final score recorded: {finalScore}");
         }
-        // Add any other lose effects
-    }
+        else
+        {
+            Debug.LogWarning("ScoreManager not found when trying to record final score.");
+        }
 
-    // --- UI Button Functions ---
+        // Store the final score using PlayerPrefs
+        PlayerPrefs.SetInt(FinalScoreKey, finalScore);
+        PlayerPrefs.Save(); // Force save immediately (optional but good practice here)
 
-    public void RestartGame()
-    {
-        Time.timeScale = 1f; // IMPORTANT: Reset time scale before loading scene
-        // Reload the current scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
+        // Reset timescale JUST IN CASE
+        Time.timeScale = 1f;
 
-    public void QuitGame()
-    {
-        Debug.Log("Quitting Game...");
-        Application.Quit(); // Note: This only works in a built game, not the Editor
+        // Load the Exit Scene
+        SceneManager.LoadScene(exitSceneName);
     }
 }
